@@ -1,9 +1,9 @@
 package com.study.sys.controller;
 
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -13,9 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Deja wu
  * @since 2020-07-09
  */
-@RestController
-@RequestMapping("/sys/bills")
+@Controller
+@RequestMapping("/bills")
 public class BillsController {
 
+    /**
+     * 跳转到系统登录的主页
+     */
+    @RequestMapping("toBillsList")
+    public String toBillsList(){
+        return "list";
+    }
 }
 
