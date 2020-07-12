@@ -45,6 +45,7 @@ public class LoginController {
     @RequestMapping("login")
     @ResponseBody
     public ResultObj login(String loginname, String pwd,String code,HttpSession session){
+
         //将前端用户输入的验证码与session中生成的验证码比对
         if (code!=null&&code.equals(session.getAttribute("code"))) {
             //组装mp查询条件
@@ -59,7 +60,7 @@ public class LoginController {
             }else {
                 return new ResultObj(-1,"用户名或密码正确");
             }
-        }else {
+        }else{
             return new ResultObj(-1,"验证码错误");
         }
     }
