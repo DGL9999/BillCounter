@@ -1,10 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>账单列表</title>
+    <meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="icon" th:href="@{/resources/favicon.ico}">
+	<link rel="stylesheet" th:href="@{/resources/layui/css/layui.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/resources/css/public.css}" media="all" />
 </head>
 <body>
-主页
+<h1 align="center">账单列表</h1>
+<!-- 查询条件开始 -->
+    <div style="text-align: center;">
+        <form id="searchFrm" method="post" class="layui-form">
+            <div class="layui-form-item">
+		    <div class="layui-inline">
+		      <label class="layui-form-label">帐单类型</label>
+		      <div class="layui-input-inline">
+                <select name="typeid" id="search_typeid">
+                    <option value="0">请选择</option>
+                </select>
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label">开始日期</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="startDate" id="startDate" readonly="readonly" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label">结束日期</label>
+		      <div class="layui-input-inline">
+		        <input type="tel" name="endDate" id="endDate" readonly="readonly"  placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		  </div>
+
+		   <div class="layui-form-item">
+		      <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="doSerach">查询</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button type="button" class="layui-btn layui-btn-warm" id="doAdd">添加</button>
+		      </div>
+		   </div>
+        </form>
+    </div>
+<!-- 查询条件结束 -->
+
+<!-- 数据表格开始 -->
+	<div>
+		<table class="layui-hide" id="billTable" lay-filter="billTable"></table>
+	</div>
+<!-- 数据表格结束 -->
 </body>
+	<script type="text/javascript" th:src="@{/resources/layui/layui.js}"></script>
+    <script type="application/javascript">
+        let form;
+        let $;
+        let layer;
+        let laydate;
+        let table;
+        layui.use(['form','jquery','layer','laydate','table'],function () {
+            form = layui.form;
+            $ = layui.jquery;
+            layer = layui.layer;
+            laydate = layui.laydate;
+            table = layui.table;
+
+            //渲染时间选择器
+			laydate.render({
+				elem:'#startDate'
+			});
+			laydate.render({
+				elem:'#endDate'
+			});
+
+			//数据表格渲染
+			let tableInit = table.render({
+				elem: '#billTable' //渲染的目标对象
+				,url:'/bills/loadAllBills' //数据接口
+				,title: '账单数据列表'//数据导出来的标题
+				,toolbar:true  //表格的工具条
+				,height:'auto'
+				,cellMinWidth:100 //设置列的最小默认宽度
+				,page: true //是否启用分页
+				,cols: [ [ //列表数据
+					{field:'id', title:'ID',align:'center'}
+					,{field:'title', title:'账单标题',align:'center'}
+					,{field:'billtime', title:'记账时间',align:'center'}
+					,{field:'typeid', title:'类型ID',align:'center'}
+					,{field:'typeName', title:'类型名称',align:'center'}
+					,{field:'price', title:'价格',align:'center'}
+					,{field:'remark', title:'备注',align:'center'}
+					] ],
+				done:function (data, curr) {
+					//不是第一页时，如果当前返回的数据为0那么就返回上一页
+					if(data.data.length==0&&curr!=1){
+						tableIns.reload({
+							page:{curr:curr-1 }
+						})
+					}
+				}
+			});
+
+        })
+    </script>
 </html>

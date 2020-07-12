@@ -1,9 +1,13 @@
 package com.study.sys.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,9 +30,12 @@ public class Bills implements Serializable {
 
     private String title;
 
-    private LocalDateTime billtime;
+    private Date billtime;
 
     private Integer typeid;
+
+    @TableField(exist = false)
+    private String typeName;
 
     private Double price;
 
