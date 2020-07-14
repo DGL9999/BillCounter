@@ -3,15 +3,15 @@
 
  Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50724
+ Source Server Version : 50721
  Source Host           : localhost:3306
  Source Schema         : bills
 
  Target Server Type    : MySQL
- Target Server Version : 50724
+ Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 20/09/2019 09:52:01
+ Date: 14/07/2020 21:07:45
 */
 
 SET NAMES utf8mb4;
@@ -29,7 +29,7 @@ CREATE TABLE `bills`  (
   `price` double(65, 2) NULL DEFAULT NULL,
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of bills
@@ -37,6 +37,8 @@ CREATE TABLE `bills`  (
 INSERT INTO `bills` VALUES (1, '小明借我的钱去喝酒', '2019-08-09 11:29:29', 3, 200.00, '111');
 INSERT INTO `bills` VALUES (2, '21231', '2019-08-09 04:25:21', 4, 22.00, '22');
 INSERT INTO `bills` VALUES (3, '222', '2019-09-03 16:00:00', 1, 222.00, '222');
+INSERT INTO `bills` VALUES (4, 'sdsf', '2020-07-14 12:53:47', 1, 1.00, '');
+INSERT INTO `bills` VALUES (5, 'sdfd', '2020-07-14 12:56:08', 2, 2.00, '');
 
 -- ----------------------------
 -- Table structure for billtype
