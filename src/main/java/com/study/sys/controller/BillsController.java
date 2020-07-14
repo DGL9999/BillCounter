@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.study.common.DataGridView;
+import com.study.common.ResultObj;
 import com.study.sys.pojo.Bills;
 import com.study.sys.pojo.Billtype;
 import com.study.sys.service.IBillsService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -60,10 +62,26 @@ public class BillsController {
         List<Bills> records = page.getRecords();
 
         for (Bills bills : records) {
-            Billtype billtype = this.iBilltypeService.getById(bills.getId());
+            Billtype billtype = this.iBilltypeService.getById(bills.getTypeid());
             bills.setTypeName(billtype.getName());
         }
         return new DataGridView(page.getTotal(),records);
+    }
+
+    /**
+     * 添加账单
+     */
+    @RequestMapping("addBill")
+    @ResponseBody
+    public ResultObj addBill(BillsVo billsVo){
+        billsVo.setBilltime(new Date());
+        try {
+            this.iBillsService.save(billsVo);
+            return new ResultObj(200,"添加成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultObj(-1,"添加失败");
+        }
     }
 }
 

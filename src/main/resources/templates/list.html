@@ -16,47 +16,95 @@
 <body>
 <h1 align="center">账单列表</h1>
 <!-- 查询条件开始 -->
-    <div style="text-align: center;">
-        <form id="searchFrm" method="post" class="layui-form">
-            <div class="layui-form-item">
-		    <div class="layui-inline">
-		      <label class="layui-form-label">帐单类型</label>
-		      <div class="layui-input-inline">
-                <select name="typeid" id="search_typeid">
-                    <option value="0">请选择</option>
-                </select>
-		      </div>
-		    </div>
-		    <div class="layui-inline">
-		      <label class="layui-form-label">开始日期</label>
-		      <div class="layui-input-inline">
-		        <input type="text" name="startDate" id="startDate" readonly="readonly" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
-		      </div>
-		    </div>
-		    <div class="layui-inline">
-		      <label class="layui-form-label">结束日期</label>
-		      <div class="layui-input-inline">
-		        <input type="tel" name="endDate" id="endDate" readonly="readonly"  placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
-		      </div>
-		    </div>
-		  </div>
+    <div class="layui-collapse" lay-filter="test">
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">条件查询</h2>
+            <div class="layui-colla-content">
+				<div style="text-align: center;">
+					<form id="searchFrm" method="post" class="layui-form layui-form-pane">
+						<div class="layui-form-item">
+						<div class="layui-inline">
+						  <label class="layui-form-label">帐单类型</label>
+						  <div class="layui-input-inline">
+							<select name="typeid" id="search_typeid">
+								<option value="0">请选择</option>
+							</select>
+						  </div>
+						</div>
+						<div class="layui-inline">
+						  <label class="layui-form-label">开始日期</label>
+						  <div class="layui-input-inline">
+							<input type="text" name="startDate" id="startDate" readonly="readonly" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+						  </div>
+						</div>
+						<div class="layui-inline">
+						  <label class="layui-form-label">结束日期</label>
+						  <div class="layui-input-inline">
+							<input type="tel" name="endDate" id="endDate" readonly="readonly"  placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+						  </div>
+						</div>
+					  </div>
 
-		   <div class="layui-form-item">
-		      <div class="layui-input-block">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="doSerach">查询</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                <button type="button" class="layui-btn layui-btn-warm" id="doAdd">添加</button>
-		      </div>
-		   </div>
-        </form>
-    </div>
+					   <div class="layui-form-item">
+						  <div class="layui-input-block">
+							<button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch">查询</button>
+							<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+						  </div>
+					   </div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 <!-- 查询条件结束 -->
 
 <!-- 数据表格开始 -->
 	<div>
-		<table class="layui-hide" id="billTable" lay-filter="billTable"></table>
+		<table class="layui-hide" id="billTable" lay-filter="billTable">
+			<div style="display: none;" id="billToolBar">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="add">增加</button>
+        	</div>
+		</table>
 	</div>
 <!-- 数据表格结束 -->
+
+<!-- 添加账单弹出层开始 -->
+	<div style="display: none;padding: 20px; " id="addBillDiv" >
+        <form class="layui-form layui-row layui-col-space10 layui-form-pane" lay-filter="dataFrm" id="dataFrm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">账单类型</label>
+                <div class="layui-input-block" id="billTypeDiv">
+                </div>
+            </div>
+            <div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">账单标题</label>
+					<div class="layui-input-inline">
+						<input type="text" name="title" class="layui-input" lay-verify="required">
+					</div>
+				</div>
+				<div class="layui-inline">
+				    <label class="layui-form-label">金额</label>
+					<div class="layui-input-inline">
+						<input type="text" name="price" class="layui-input" lay-verify="required|number">
+					</div>
+				</div>
+            </div>
+            <div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+					<div class="layui-input-block">
+						<textarea name="remark" class="layui-textarea" style="width: 525px"></textarea>
+					</div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <div class="layui-inline">
+                    <button type="button" class="layui-btn" id="doSubmit" lay-filter="doSubmit" lay-submit="" >提交</button>
+                    <button type="reset" class="layui-btn" id="reset">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<!-- 添加账单弹出层结束 -->
 </body>
 	<script type="text/javascript" th:src="@{/resources/layui/layui.js}"></script>
     <script type="application/javascript">
@@ -65,12 +113,14 @@
         let layer;
         let laydate;
         let table;
-        layui.use(['form','jquery','layer','laydate','table'],function () {
+        let element;
+        layui.use(['form','jquery','layer','laydate','table','element'],function () {
             form = layui.form;
             $ = layui.jquery;
             layer = layui.layer;
             laydate = layui.laydate;
             table = layui.table;
+            element = layui.element;
 
             //渲染时间选择器
 			laydate.render({
@@ -81,11 +131,11 @@
 			});
 
 			//数据表格渲染
-			let tableInit = table.render({
+			let tableIns = table.render({
 				elem: '#billTable' //渲染的目标对象
 				,url:'/bills/loadAllBills' //数据接口
 				,title: '账单数据列表'//数据导出来的标题
-				,toolbar:true  //表格的工具条
+				,toolbar:'#billToolBar'  //表格的工具条
 				,height:'auto'
 				,cellMinWidth:100 //设置列的最小默认宽度
 				,page: true //是否启用分页
@@ -93,9 +143,9 @@
 					{field:'id', title:'ID',align:'center'}
 					,{field:'title', title:'账单标题',align:'center'}
 					,{field:'billtime', title:'记账时间',align:'center'}
-					,{field:'typeid', title:'类型ID',align:'center'}
+					// ,{field:'typeid', title:'类型ID',align:'center'}
 					,{field:'typeName', title:'类型名称',align:'center'}
-					,{field:'price', title:'价格',align:'center'}
+					,{field:'price', title:'金额',align:'center'}
 					,{field:'remark', title:'备注',align:'center'}
 					] ],
 				done:function (data, curr) {
@@ -108,6 +158,98 @@
 				}
 			});
 
+			//初始化条件查询的下拉列表
+			$.get("/billtype/loadAllBillType",function (obj){
+				let types = obj.data;
+				let search_typeid=$("#search_typeid")
+				$.each(types,function (index,item) {
+					search_typeid.append("<option value="+item.id+">"+item.name+"</option>");
+				});
+				form.render("select")
+			});
+
+			//模糊查询
+			form.on("submit(doSearch)",function (data) {
+				tableIns.reload({
+					url:"/bills/loadAllBills",
+					where:data.field
+				})
+				return false;
+			});
+
+			//监听头部工具栏事件
+			table.on("toolbar(billTable)",function(obj){
+				switch(obj.event){
+					case 'add':
+					openAddBill();
+					break;
+				}
+			})
+
+			let mainIndex;
+			//打开添加弹出层
+			function openAddBill () {
+				mainIndex = layer.open({
+					type:1,
+					title:'修改出租单',
+					content:$("#addBillDiv"),
+					area:['700px','400px'],
+					btnAlign:'c',
+					closeBtn:0,
+					success:function(index){
+						//清空表单数据
+                    	$("#reset").click();
+						let div = $("#billTypeDiv")
+						div.html("");
+						$.get("/billtype/loadAllBillType",function (obj){
+							let types = obj.data;
+							$.each(types,function (index,item) {
+								if (index==0){
+									div.append("<input type='radio' name='typeid' checked='' value='"+item.id+"' title='"+item.name+"'>");
+								}else {
+									div.append("<input type='radio' name='typeid' value='"+item.id+"' title='"+item.name+"'>");
+								}
+							});
+							form.render("radio")
+						});
+					},
+					btn:['<div class="layui-icon layui-icon-ok">添加</div>','<div class="layui-icon layui-icon-refresh">重置</div>','<div class="layui-icon layui-icon-close">关闭</div>'],
+					yes:function(index, layero){
+						//调用隐藏提交按钮，提交表格
+						$("#doSubmit").click();
+					},
+					btn2:function(index, layero) {
+						layer.msg("重置");
+						//调用隐藏重置按钮，重置表格
+						$("#reset").click();
+						//重置成功，不关闭页面
+						return false
+					},
+					btn3:function(index, layero){
+						layer.msg("关闭");
+						//关闭页面
+						$("#reset").click();
+						return true;
+					}
+				});
+			}
+
+		    //提交按钮
+			form.on("submit(doSubmit)", function (data) {
+				layer.confirm('是否添加账单？',{
+					btn:["是","否"]
+				},function () {
+					$.post("/bills/addBill", data.field, function (obj) {
+						layer.msg(obj.msg);
+						//刷新数据 表格
+						tableIns.reload();
+						//提交成功，关闭弹出层
+						layer.close(mainIndex);
+					})
+				},function (index) {
+					layer.close(index);
+				})
+			});
         })
     </script>
 </html>
